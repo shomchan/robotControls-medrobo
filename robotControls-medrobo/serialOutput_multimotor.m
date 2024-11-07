@@ -1,5 +1,5 @@
 %% MATLAB code outputs angle command via serial to Arduino device
-
+delete(instrfindall);%delete any residual serial connection
 close all
 clear
 clc

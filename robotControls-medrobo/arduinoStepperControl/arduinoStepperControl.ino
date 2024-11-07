@@ -54,7 +54,7 @@ void loop() {
   delay(100);
   float theta2 = Serial.parseFloat();
   // For now rotating just two motors, can be expanded upon later
-controller.rotate(static_cast<long>(theta1), static_cast<long>(theta2));  // converts float to long (because library requires it)
+controller.rotate(theta1, theta2);  // note to self: try converting float to long (library may require it)
   // Serial.println(theta2);
   delay(100);
 }
