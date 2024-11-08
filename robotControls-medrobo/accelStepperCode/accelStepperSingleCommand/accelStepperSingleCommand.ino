@@ -41,6 +41,7 @@ int readIntFromSerial() {
 
 void runMotor() {
     while (myStepper.distanceToGo() != 0) {
+    Serial.println(myStepper.distanceToGo());
     myStepper.run();
   }
 }

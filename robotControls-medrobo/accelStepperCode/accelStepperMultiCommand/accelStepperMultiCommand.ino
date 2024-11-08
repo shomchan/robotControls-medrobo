@@ -10,14 +10,20 @@ const int stepPin2 = 5;
 const int dirPin3 = 6;
 const int stepPin3 = 7;
 
+#define motorPin1  8     // IN1 on ULN2003 ==> Blue   on 28BYJ-48
+#define motorPin2  9     // IN2 on ULN2004 ==> Pink   on 28BYJ-48
+#define motorPin3  10    // IN3 on ULN2003 ==> Yellow on 28BYJ-48
+#define motorPin4  11    // IN4 on ULN2003 ==> Orange on 28BYJ-48
+
 // Creates an instance of each motor
 AccelStepper motor1(AccelStepper::DRIVER, stepPin1, dirPin1);
 AccelStepper motor2(AccelStepper::DRIVER, stepPin2, dirPin2);
-AccelStepper motor3(AccelStepper::DRIVER, stepPin3, dirPin3);
+// AccelStepper motor3(AccelStepper::DRIVER, stepPin3, dirPin3);
+AccelStepper motor4(AccelStepper::HALF4WIRE, motorPin1, motorPin3, motorPin2, motorPin4);
 
 MultiStepper motors;
 
-const int dof = 2; // CHANGE VALUE to number of motors
+const int dof = 3; // CHANGE VALUE to number of motors
 long thetas[dof]; // initializing theta array
 
 void setup() {
@@ -25,15 +31,15 @@ void setup() {
 
 	// set the maximum speed, acceleration factor,
 	// initial speed, and set up multistepper
-	motor1.setMaxSpeed(1000);
-	motor1.setAcceleration(50);
-	motor1.setSpeed(200);
-  motor2.setMaxSpeed(1000);
-	motor2.setAcceleration(50);
-	motor2.setSpeed(200);
-
+	motor1.setMaxSpeed(500);
+  motor2.setMaxSpeed(500);
+	// motor3.setMaxSpeed(500);
+  motor4.setMaxSpeed(500);
+  
   motors.addStepper(motor1);
   motors.addStepper(motor2);
+  // motors.addStepper(motor3);
+  motors.addStepper(motor4);
 }
 
 int readIntFromSerial() {
@@ -59,15 +65,15 @@ void loop() {
   // Serial.print(", ");
   // thetas[1] = Serial.parseFloat();
   // Serial.println(thetas[1]);
-  
-  for (int i = 0; i < dof; i++) {
-    Serial.print("Enter theta ");
-    Serial.print(i + 1);
-    Serial.print(": ");
-    thetas[i] = readIntFromSerial();
-  }
+  if (motors.run() == 0) {
+    for (int i = 0; i < dof; i++) {
+      Serial.print("Enter theta ");
+      Serial.print(i);
+      Serial.print(": ");
+      thetas[i] = readIntFromSerial();
+    }
 
-  motors.moveTo(thetas);
-  motors.runSpeedToPosition();
-  delay(1000);
+    motors.moveTo(thetas);
+    delay(1000);
+  }
 }
