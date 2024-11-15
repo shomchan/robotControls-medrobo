@@ -18,12 +18,12 @@ const int stepPin3 = 7;
 // Creates an instance of each motor
 AccelStepper motor1(AccelStepper::DRIVER, stepPin1, dirPin1);
 AccelStepper motor2(AccelStepper::DRIVER, stepPin2, dirPin2);
-// AccelStepper motor3(AccelStepper::DRIVER, stepPin3, dirPin3);
+AccelStepper motor3(AccelStepper::DRIVER, stepPin3, dirPin3);
 AccelStepper motor4(AccelStepper::HALF4WIRE, motorPin1, motorPin3, motorPin2, motorPin4);
 
 MultiStepper motors;
 
-const int dof = 3; // CHANGE VALUE to number of motors
+const int dof = 4; // CHANGE VALUE to number of motors
 long thetas[dof]; // initializing theta array
 
 void setup() {
@@ -33,12 +33,12 @@ void setup() {
 	// initial speed, and set up multistepper
 	motor1.setMaxSpeed(500);
   motor2.setMaxSpeed(500);
-	// motor3.setMaxSpeed(500);
+	motor3.setMaxSpeed(500);
   motor4.setMaxSpeed(500);
   
   motors.addStepper(motor1);
   motors.addStepper(motor2);
-  // motors.addStepper(motor3);
+  motors.addStepper(motor3);
   motors.addStepper(motor4);
 }
 
