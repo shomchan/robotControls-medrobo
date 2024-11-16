@@ -25,6 +25,7 @@ MultiStepper motors;
 
 const int dof = 4; // CHANGE VALUE to number of motors
 long thetas[dof]; // initializing theta array
+bool receivedThetas[dof] = {false}; // Array to track received inputs
 
 void setup() {
   Serial.begin(9600);
@@ -42,38 +43,54 @@ void setup() {
   motors.addStepper(motor4);
 }
 
-int readIntFromSerial() {
-  while (true) {  // Keep checking until get a valid integer
+float readFloatFromSerial(int motorIndex) {
+  Serial.print("Enter theta ");
+  Serial.print(motorIndex);
+  Serial.print(": ");
+  
+  while (true) {
     if (Serial.available() > 0) {
-      int receivedInt = Serial.parseInt();
-      // Check if has actually received a complete number
+      float receivedFloat = Serial.parseFloat();
       if (Serial.read() == '\n') {
-        Serial.print("Received integer: ");
-        Serial.println(receivedInt);
-        return receivedInt;  // Return received int
+        Serial.print("Received theta ");
+        Serial.print(motorIndex);
+        Serial.print(": ");
+        Serial.println(receivedFloat);
+        receivedThetas[motorIndex] = true; // Mark this theta as received
+        return receivedFloat;
       }
     }
-    // Small delay to prevent excessive usage
-    delay(10);
+    // Prompt again if no input received
+    if (Serial.available() == 0) {
+      delay(100);  // Wait for a second before prompting again
+      Serial.print("Enter theta ");
+      Serial.print(motorIndex);
+      Serial.println(": ");
+    }
   }
 }
 
 void loop() {
-  // thetas[0] = Serial.parseFloat();
-  // Serial.print(thetas[0]);
-  // delay(100);
-  // Serial.print(", ");
-  // thetas[1] = Serial.parseFloat();
-  // Serial.println(thetas[1]);
   if (motors.run() == 0) {
+    bool allInputsReceived = true;
+    
     for (int i = 0; i < dof; i++) {
-      Serial.print("Enter theta ");
-      Serial.print(i);
-      Serial.print(": ");
-      thetas[i] = readIntFromSerial();
+      if (!receivedThetas[i]) {
+        thetas[i] = readFloatFromSerial(i);
+        if (!receivedThetas[i]) {
+          allInputsReceived = false;
+          break;
+        }
+      }
     }
-
-    motors.moveTo(thetas);
-    delay(1000);
+    
+    if (allInputsReceived) {
+      motors.moveTo(thetas);
+      delay(1000);
+      // Reset receivedThetas for the next round of inputs
+      for (int i = 0; i < dof; i++) {
+        receivedThetas[i] = false;
+      }
+    }
   }
 }

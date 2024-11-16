@@ -5,9 +5,52 @@
 % params setup: cell array contains angles in degrees in order of motor
 
 %% function definition
-function [] = sendCommands_multimotor(msg,ard)
-    for i=1:size(msg,2) % iterates through each cell in msg
-        writeline(ard,sprintf('%f',msg{i})); % prints as text to arduino
-        pause(0.05) % pauses 50ms, change as necessary
+function [] = sendCommands_multimotor(msg, ard)
+    % clear any leftover data in the input buffer
+    flush(ard);
+
+    % wait for "Enter theta 0:"
+    while true
+        if ard.NumBytesAvailable > 0
+            read = readline(ard);
+            disp(read);
+            if contains(read, "Enter theta 0:")
+                break;
+            end
+        end
+        pause(0.02);
     end
+
+    % send theta values
+    for i = 1:numel(msg)
+        % wait for the prompt for each theta
+        while true
+            if ard.NumBytesAvailable > 0
+                read = readline(ard);
+                disp(read);
+                if contains(read, sprintf("Enter theta %d:", i-1))
+                    break;
+                end
+            end
+            pause(0.02);
+        end
+
+        % send the theta value
+        fprintf("Sending theta %d: %.3f\n", i-1, msg{i});
+        writeline(ard, sprintf('%.3f', msg{i}));
+
+        % wait for confirmation
+        while true
+            if ard.NumBytesAvailable > 0
+                read = readline(ard);
+                disp(read);
+                if contains(read, sprintf("Received theta %d:", i-1))
+                    break;
+                end
+            end
+            pause(0.02);
+        end
+    end
+
+    fprintf("All joint values sent successfully.\n");
 end
