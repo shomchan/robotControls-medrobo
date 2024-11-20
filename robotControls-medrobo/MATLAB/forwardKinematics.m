@@ -8,9 +8,9 @@
 function out = forwardKinematics(input)
     % specific to our robot:
     input=input+[0; pi/2; 0; -pi/2];
-    dhParams=   [0 0.15 0 .125           % a in DH convention
+    dhParams=   [0 0.14 0 .125           % a in DH convention
                  pi/2 pi/2 -pi/2 -pi/2  % alpha in DH convention
-                 0.01 0 .1 0           % d in DH convention
+                 0.12 0 .07 0           % d in DH convention
                  ];
     dhParams=dhParams';
     rows=size(input,1);

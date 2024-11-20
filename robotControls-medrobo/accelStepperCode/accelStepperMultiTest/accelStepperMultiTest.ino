@@ -3,7 +3,7 @@
 
 int xPositions[] = {-10, 20, -50, 0, 50, 0};
 int yPositions[] = {-50, 30, -10, 0, 10, 0};
-int kPositions[] = {40, -10, 20, 0, -30, 0};
+int kPositions[] = {400, -100, 200, 0, -300, 0};
 int zPositions[] = {400, -100, 200, 0, -300, 0};
 
 
@@ -12,11 +12,17 @@ int zPositions[] = {400, -100, 200, 0, -300, 0};
 #define motorPin3  10    // IN3 on ULN2003 ==> Yellow on 28BYJ-48
 #define motorPin4  11    // IN4 on ULN2003 ==> Orange on 28BYJ-48
 
+#define motorPin5 22
+#define motorPin6 23
+#define motorPin7 24
+#define motorPin8 25
+
 // EG X-Y position bed driven by 2 steppers
 // Alas its not possible to build an array of these with different pins for each :-(
 AccelStepper stepper1(AccelStepper::DRIVER, 5, 4);
 AccelStepper stepper2(AccelStepper::DRIVER, 3, 2);
-AccelStepper stepperk(AccelStepper::DRIVER, 7, 6);
+// AccelStepper stepperk(AccelStepper::DRIVER, 7, 6);
+AccelStepper stepperk(AccelStepper::HALF4WIRE, motorPin5, motorPin7, motorPin6, motorPin8);
 AccelStepper stepper3(AccelStepper::HALF4WIRE, motorPin1, motorPin3, motorPin2, motorPin4);
 
 long positions[4]; // Array of desired stepper positions

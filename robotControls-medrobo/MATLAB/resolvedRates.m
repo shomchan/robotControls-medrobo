@@ -77,7 +77,7 @@ function [out, counter, p_err, ang_err] = resolvedRates(q_in,xc_target,n,tols,ma
     counter=1; % initialize counter
     
     while p_err>tol_p || ang_err>tol_xi % iterate until under thresholds
-        if viz && (mod(counter,5) == 1)
+        if viz && (mod(counter,10) == 1)
             axis_handle = fig.CurrentAxes;
             cla(axis_handle)
             ht = drawArrows(xc_target(1:3,4,n), xc_target(1:3,1:3,n), 5e-2, 2); % draw target pose
@@ -93,7 +93,7 @@ function [out, counter, p_err, ang_err] = resolvedRates(q_in,xc_target,n,tols,ma
             jointVals{3}=sprintf("θ_1: %0.2f",q(2));
             jointVals{4}=sprintf("θ_2: %0.2f",q(3));
             jointVals{5}=sprintf("θ_3: %0.2f",q(4));
-            text(0.2,-0.2,0.025,jointVals);
+            text(0.2,-0.1,0.025,jointVals);
             drawnow
         end
         if counter>max_iter % break if past max_iter

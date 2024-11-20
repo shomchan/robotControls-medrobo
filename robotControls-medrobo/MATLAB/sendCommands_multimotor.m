@@ -13,12 +13,12 @@ function [] = sendCommands_multimotor(msg, ard)
     while true
         if ard.NumBytesAvailable > 0
             read = readline(ard);
-            disp(read);
+%             disp(read);
             if contains(read, "Enter theta 0:")
                 break;
             end
         end
-        pause(0.02);
+        pause(0.01);
     end
 
     % send theta values
@@ -27,28 +27,28 @@ function [] = sendCommands_multimotor(msg, ard)
         while true
             if ard.NumBytesAvailable > 0
                 read = readline(ard);
-                disp(read);
+%                 disp(read);
                 if contains(read, sprintf("Enter theta %d:", i-1))
                     break;
                 end
             end
-            pause(0.02);
+            pause(0.01);
         end
 
         % send the theta value
-        fprintf("Sending theta %d: %.3f\n", i-1, msg{i});
+%         fprintf("Sending theta %d: %.3f\n", i-1, msg{i});
         writeline(ard, sprintf('%.3f', msg{i}));
 
         % wait for confirmation
         while true
             if ard.NumBytesAvailable > 0
                 read = readline(ard);
-                disp(read);
+%                 disp(read);
                 if contains(read, sprintf("Received theta %d:", i-1))
                     break;
                 end
             end
-            pause(0.02);
+            pause(0.01);
         end
     end
 

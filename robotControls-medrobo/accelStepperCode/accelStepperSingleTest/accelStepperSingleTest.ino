@@ -2,8 +2,8 @@
 #include <AccelStepper.h>
 
 // Define pin connections
-const int dirPin = 2;
-const int stepPin = 3;
+const int dirPin = 4;
+const int stepPin = 5;
 
 // Define motor interface type
 #define motorInterfaceType 1
@@ -14,7 +14,7 @@ AccelStepper myStepper(motorInterfaceType, stepPin, dirPin);
 void setup() {
 	// set the maximum speed, acceleration factor,
 	// initial speed and the target position
-	myStepper.setMaxSpeed(1000);
+	myStepper.setMaxSpeed(100);
 	myStepper.setAcceleration(50);
 	myStepper.setSpeed(200);
 	myStepper.moveTo(200);

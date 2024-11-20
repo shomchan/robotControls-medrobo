@@ -15,10 +15,16 @@ const int stepPin3 = 7;
 #define motorPin3  10    // IN3 on ULN2003 ==> Yellow on 28BYJ-48
 #define motorPin4  11    // IN4 on ULN2003 ==> Orange on 28BYJ-48
 
+#define motorPin5 22
+#define motorPin6 23
+#define motorPin7 24
+#define motorPin8 25
+
 // Creates an instance of each motor
 AccelStepper motor1(AccelStepper::DRIVER, stepPin1, dirPin1);
 AccelStepper motor2(AccelStepper::DRIVER, stepPin2, dirPin2);
-AccelStepper motor3(AccelStepper::DRIVER, stepPin3, dirPin3);
+// AccelStepper motor3(AccelStepper::DRIVER, stepPin3, dirPin3);
+AccelStepper motor3(AccelStepper::HALF4WIRE, motorPin5, motorPin7, motorPin6, motorPin8);
 AccelStepper motor4(AccelStepper::HALF4WIRE, motorPin1, motorPin3, motorPin2, motorPin4);
 
 MultiStepper motors;
@@ -32,10 +38,10 @@ void setup() {
 
 	// set the maximum speed, acceleration factor,
 	// initial speed, and set up multistepper
-	motor1.setMaxSpeed(500);
-  motor2.setMaxSpeed(500);
-	motor3.setMaxSpeed(500);
-  motor4.setMaxSpeed(500);
+	motor1.setMaxSpeed(200);
+  motor2.setMaxSpeed(100);
+	motor3.setMaxSpeed(200);
+  motor4.setMaxSpeed(200);
   
   motors.addStepper(motor1);
   motors.addStepper(motor2);
@@ -84,9 +90,10 @@ void loop() {
       }
     }
     
+  
     if (allInputsReceived) {
       motors.moveTo(thetas);
-      delay(1000);
+      delay(100);
       // Reset receivedThetas for the next round of inputs
       for (int i = 0; i < dof; i++) {
         receivedThetas[i] = false;

@@ -3,12 +3,34 @@ clc
 
 %% create circle
 
+% % circle 1:
+% % this circle definitely works but is quite small
+% N = 72; % number of targets
+% center = [0.26; 0.0; 0.11];
+% R = [0 0 1;
+%      1 0 0;
+%      0 1 0]; % orientation of the circle
+% r = 0.04; % radius
+% 
+% Tt = zeros(4,4,N);
+% for i = 1:N
+%     alpha = i/N*2*pi;
+%     ca = cos(alpha); sa = sin(alpha);
+%     Tt(1,4,i) = R(1,1)*r*ca + R(1,2)*r*sa + center(1);
+%     Tt(2,4,i) = R(2,1)*r*ca + R(2,2)*r*sa + center(2);
+%     Tt(3,4,i) = R(3,1)*r*ca + R(3,2)*r*sa + center(3);
+%     Tt(1:3,1:3,i) = R*roty(-90);
+% end
+
+% circle 2:
 N = 72; % number of targets
-center = [0.26; 0.0; 0.11];
+center = [0.2; 0.0; 0.20];
 R = [0 0 1;
      1 0 0;
      0 1 0]; % orientation of the circle
-r = 0.04; % radius
+R=R*rotx(30);
+r = 0.06; % radius
+
 Tt = zeros(4,4,N);
 for i = 1:N
     alpha = i/N*2*pi;
@@ -16,7 +38,7 @@ for i = 1:N
     Tt(1,4,i) = R(1,1)*r*ca + R(1,2)*r*sa + center(1);
     Tt(2,4,i) = R(2,1)*r*ca + R(2,2)*r*sa + center(2);
     Tt(3,4,i) = R(3,1)*r*ca + R(3,2)*r*sa + center(3);
-    Tt(1:3,1:3,i) = R*roty(-90);
+    Tt(1:3,1:3,i) = R*rotz(90)*roty(-90)*rotx(180);
 end
 
 %% define parameters for resolved rates
@@ -27,20 +49,25 @@ end
 %              0 1 0  0.3
 %              0 0 0  1   ];
 
+% for circle 1:
+% tol_p=[0.005; 0.01]; % threshold error of position, brakepoint (m)
+% tol_xi=[pi/2; pi]; % threshold error of twist, brakepoint (rad)
+% tols=[tol_p tol_xi];
+
 tol_p=[0.005; 0.01]; % threshold error of position, brakepoint (m)
-tol_xi=[pi/2; pi]; % threshold error of twist, brakepoint (rad)
+tol_xi=[pi; pi]; % threshold error of twist, brakepoint (rad)
 tols=[tol_p tol_xi];
 
-v=0.1; % speed to increment (m/s)
+v=0.075; % speed to increment (m/s)
 w=0.01; % speed to increment (rad/s)
 maxs=[v w];
 dt=0.1; % time to multiply qdot to increment
 
-v2=0.09;
+v2=0.0375;
 w2=0.001;
 mins=[v2 w2];
 
-q_start=[0; 0; 0; 0]; % initializing joint angles
+q_start=[pi/4; 0; 0; 0]; % initializing joint angles
 max_iter=4000; % max allowed iterations before giving up
 
 %% run resolved rates for each target position
@@ -98,7 +125,7 @@ for k=1:N+1
         h = drawRobot(frames);
         scatter3(squeeze(Tt(1,4,:)),squeeze(Tt(2,4,:)),squeeze(Tt(3,4,:)));
         txt=sprintf("Position %d",k-1);
-        text(0.0,0.0,0.25,txt);
+        text(0.0,0.0,0.15,txt);
         % real-time data display
 %         str{1}=datestr(now);
 %         str{2}=['Target Pose # ',num2str(k),];
@@ -114,6 +141,8 @@ end
 
 %% send commands to arduino
 
+delete(instrfindall);
+
 % % takes user input for COM number that arduino is connected to
 inputCOM=inputdlg("Please input COM number for serial connection:");
 COM=strcat("COM",inputCOM{1});
@@ -126,10 +155,11 @@ arduinoSerial=serialport(COM,br); % creating arduinoSerial object
 
 for i=1:n+1
     thisq=q_storage(:,i)*180/pi;
+    thisq=thisq.*[4;2;12;-12];
     fprintf("Joint values for position %0.1f:\n",i)
-    disp(thisq);
+%     disp(thisq);
     thisq=thisq';
     thisq=num2cell(thisq);
     sendCommands_multimotor(thisq,arduinoSerial);
-    pause(1);
+    pause(0.05);
 end
