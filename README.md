@@ -1,4 +1,4 @@
-AccelStepperCode folder :
+AccelStepperCode folder:
 -
 Folder contains code based on arduino accelstepper library for testing of individual motors, motor movement in tandem, as well as code for reading serial commands as angles.
 
@@ -12,9 +12,11 @@ accelStepperMultiTest - test function of multiple motors in tandem
 
 MATLAB Code for sending commands:
 -
-serialOutput_multimotor.m - MATLAB function for input of angles to Arduino; utilizes sendCommand_multimotor.m helper function
+createControls.m - function that creates trajectory and calls all necessary helper functions to create controls, visualize, and send angles for robot movement along trajectory. 
 
-sendCommand_multimotor.m - MATLAB helper function that sends serial messages to Arduino sequentially
+inputCommands_multimotor.m - MATLAB function for manual input of angles to Arduino (useful for testing); utilizes sendCommands_multimotor.m helper function
+
+sendCommands_multimotor.m - MATLAB helper function that sends serial messages to Arduino sequentially
 
 Unused/Legacy Code:
 -
